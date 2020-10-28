@@ -1,49 +1,76 @@
-brains = [[0 , 0],
+Leftbrains = [[0 , 0],
     [0 , 0],
     [0 , 0],
     [0 , 0],
     [0 , 0]];
 
-total = 250;
+Rightbrains = [[0 , 0],
+    [0 , 0],
+    [0 , 0],
+    [0 , 0],
+    [0 , 0]];
+
+total = 50;
 show = 1;
 gameSelect = 0;
+timer = setInterval(test(), 600);
 function setup() {
     tf.setBackend('cpu');
     createCanvas(displayWidth, displayHeight);
 
     games = [];
     for(i = 0; i < total; i++){
-        brains[0][1] = new NeuralNetwork(3, 8, 3);
-        newBrain = brains[0][1].copy();
-        games.push(new Game(random()*255,random()*255,random()*255, newBrain))
+        Leftbrains[0][1] = new NeuralNetwork(3, 8, 3);
+        Rightbrains[0][1] = new NeuralNetwork(3, 8, 3);
+        games.push(new Game(random()*255,random()*255,random()*255, Leftbrains[0][1], Rightbrains[0][1]))
     }
-    
-    console.log(games[0])
   }
 
   function newGen() {
+    //clearInterval(timer)
+    console.log('New Generation')
     done = 0
-    for(i = 0; i < brains.length; i++){
-        games = []
-
-    }
-    console.log(brains)
+    games = []
     console.log(tf.memory());
     hits = 0
-    for(i = 0; i < brains.length; i++){
-        if(brains[i][0] > 0){
-            hits = brains[i][0]
-            for(j = 0; j < total/5; j++){
-                done++                
-                games.push(new Game(random()*255,random()*255,random()*255, brains[i][1]))
+    defaultLeftBrain = new NeuralNetwork(3, 8, 3);
+    defaultRightBrain = new NeuralNetwork(3, 8, 3);
+    for(i = 0; i < Leftbrains.length; i++){
+        if(Leftbrains[i][0] > 0){
+            hits = Leftbrains[i][0]
+            for(j = 0; j < Leftbrains.length; j++){
+                if(Rightbrains[j][0] > 0){
+                    games.push(new Game(random()*255,random()*255,random()*255, Leftbrains[i][1], Rightbrains[j][1]))
                 }
+                else {
+                    games.push(new Game(random()*255,random()*255,random()*255, Leftbrains[i][1], defaultRightBrain))
+                }
+                done++                
+                
             }
         }
+    }
+    console.log(Rightbrains)
+    for(i = 0; i < Rightbrains.length; i++){
+        if(Rightbrains[i][0] > 0){
+            hits = Rightbrains[i][0]
+            for(j = 0; j < Leftbrains.length; j++){
+                if(Leftbrains[j][0] > 0){
+                    games.push(new Game(random()*255,random()*255,random()*255, Leftbrains[j][1], Rightbrains[i][1]))
+                }
+                else {
+                    games.push(new Game(random()*255,random()*255,random()*255, defaultLeftBrain, Rightbrains[i][1]))
+                }
+                done++  
+            }
+        }
+    }
     diff = total - done   
     for(i = 0; i < diff; i++){
-            defaultBrain = new NeuralNetwork(3, 8, 3);
-            games.push(new Game(random()*255,random()*255,random()*255, defaultBrain))
+            games.push(new Game(random()*255,random()*255,random()*255, defaultLeftBrain, defaultRightBrain))
     }
+    //defaultLeftBrain.dispose();
+    //defaultRightBrain.dispose();
   }
 
   function keyPressed() {
@@ -56,33 +83,11 @@ function setup() {
         newGen()
     }
     else if (keyCode === UP_ARROW) {
-        games.forEach((game) => {
-            console.log(game.ball.hits)
-            hits = 0;
-            index = 0;
-            smallest = brains[0][0];
-            for(i = 0; i < brains.length; i++){
-                if(brains[i][0] < smallest){
-                    smallest = brains[i][0];
-                    index = i;
-                    
-                }
-                
-            }
-            if(game.ball.hits > smallest){
-                console.log("brain copied")
-                brains[index][0] = game.ball.hits
-                brains[index][1] = game.paddle.brain
-            }
-        });
-        newGen()
+       
     }
-    else if (keyCode === 49) {
-        show = show * -1
-    }
-    else if (keyCode === 61) {
-        framerate(60);
-    }
+}
+function test(){
+    console.log('here')
 }
 
   function draw() {
@@ -94,14 +99,13 @@ function setup() {
         games[0].draw();
     }
     games.forEach((game) => {
-        if(game.ball.offScreen() === true){
-            console.log(game.ball.hits)
+        if(game.ball.offScreen() === "LEFT"){
             hits = 0;
             index = 0;
-            smallest = brains[0][0];
-            for(i = 0; i < brains.length; i++){
-                if(brains[i][0] < smallest){
-                    smallest = brains[i][0];
+            smallest = Leftbrains[0][0];
+            for(i = 0; i < Leftbrains.length; i++){
+                if(Leftbrains[i][0] < smallest){
+                    smallest = Leftbrains[i][0];
                     index = i;
                     
                 }
@@ -109,8 +113,27 @@ function setup() {
             }
             if(game.ball.hits > smallest){
                 console.log("brain copied")
-                brains[index][0] = game.ball.hits
-                brains[index][1] = game.paddle.brain
+                Leftbrains[index][0] = game.ball.hits
+                Leftbrains[index][1] = game.paddleLeft.brain
+            }
+            games.splice(games.indexOf(game), 1)
+        }
+        if(game.ball.offScreen() === "RIGHT"){
+            hits = 0;
+            index = 0;
+            smallest = Rightbrains[0][0];
+            for(i = 0; i < Rightbrains.length; i++){
+                if(Rightbrains[i][0] < smallest){
+                    smallest = Rightbrains[i][0];
+                    index = i;
+                    
+                }
+                
+            }
+            if(game.ball.hits > smallest){
+                console.log("brain copied")
+                Rightbrains[index][0] = game.ball.hits
+                Rightbrains[index][1] = game.paddleRight.brain
             }
             games.splice(games.indexOf(game), 1)
         }

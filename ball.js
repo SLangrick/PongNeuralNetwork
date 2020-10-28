@@ -1,16 +1,30 @@
 class Ball {
     constructor(x,y,vel,r,g,b) {
-      this.y = y;
-      this.x = x;
-      this.vel = vel;
+        this.vel = vel;
+    if(Math.random() > 0.5){
+        this.vel.x = 4 * -1;
+    }
+    else {
+        this.vel.x = 4
+    }
+    if(Math.random() > 0.5){
+        this.vel.y = vel.y * -1;
+    }
+        this.x = x
+        this.y = y;
       this.color = color;
       this.r = 15;
       this.hits = 0;
       this.red = r;
       this.g = g;
       this.b = b;
-
-      this.backHit = 0;
+    if(this.x < 0){
+        this.paddleHit = 0;
+    }
+    else {
+        this.paddleHit = 1;
+    }
+      
 
     }
     draw(){
@@ -20,7 +34,7 @@ class Ball {
         fill(this.red,this.g,this.b,100)
         //circle(this.x,this.y,this.r*2)
     }
-    update(paddle){
+    update(paddleLeft, paddleRight){
         this.x = this.x + this.vel.x
         this.y = this.y + this.vel.y
         if(this.y - this.r < 0){
@@ -29,18 +43,23 @@ class Ball {
         if(this.y + this.r > displayHeight) {
             this.vel.y = this.vel.y * -1
         }
-        if(this.x + this.r > displayWidth) {
-            this.vel.x = Math.random() * 10 * -1
-            this.vel.y = Math.random() * 10
-            this.backHit = 0;
-        }
-        if(this.RectCircleColliding(paddle) == true) {
-            if(this.backHit == 0){
+        if(this.RectCircleColliding(paddleLeft) == true) {
+            if(this.paddleHit == 0){
                 this.hits += 1;
-                this.backHit = 1;
+                this.paddleHit = 1;
             }
             
             this.vel.x = this.vel.x * -1 
+            this.vel.y = Math.random() * 10
+        }
+        if(this.RectCircleColliding(paddleRight) == true) {
+            if(this.paddleHit == 1){
+                this.hits += 1;
+                this.paddleHit = 0;
+            }
+            
+            this.vel.x = this.vel.x * -1 
+            this.vel.y = Math.random() * 10
         }
     }
     RectCircleColliding(rect){
@@ -60,11 +79,14 @@ class Ball {
     }
 
     offScreen() {
-        if(this.y > displayHeight || this.y < 0 || this.x < 0){
-            return true
+        if(this.x < 0){
+            return "RIGHT";
+        }
+        else if(this.x > displayWidth){
+            return "LEFT";
         }
         else {
-            return false
+            return false;
         }
     }
 }

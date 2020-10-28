@@ -31,6 +31,10 @@ copy() {
     });
   }
 
+  dispose() {
+    this.model.dispose();
+  }
+
 mutate(rate) {
     tf.tidy(() => {
       const weights = this.model.getWeights();

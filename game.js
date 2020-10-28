@@ -1,14 +1,17 @@
 class Game {
-    constructor(r,b,g, brain){
-        this.paddle = new Paddle(r,b,g,brain);
-        this.ball = new Ball(displayWidth - 30, displayHeight / 2, {x: Math.random() * 10* -1,y: Math.random() * 10}, r,b,g);
+    constructor(r,b,g, brain1, brain2){
+        this.paddleLeft = new Paddle(r,b,g,brain1, "LEFT");
+        this.paddleRight = new Paddle(r,b,g,brain2, "RIGHT");
+        this.ball = new Ball(displayWidth / 2, displayHeight / 2, {x: Math.random() * 10,y: Math.random() * 10}, r,b,g);
     }
     update(){
-        this.paddle.update(this.ball);
-        this.ball.update(this.paddle);
+        this.paddleLeft.update(this.ball);
+        this.paddleRight.update(this.ball);
+        this.ball.update(this.paddleLeft,this.paddleRight);
     }
     draw(){
-        this.paddle.draw();
+        this.paddleLeft.draw();
+        this.paddleRight.draw();
         this.ball.draw();
     }
 }
