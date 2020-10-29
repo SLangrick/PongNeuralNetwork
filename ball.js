@@ -1,24 +1,24 @@
 class Ball {
     constructor(x,y,vel,r,g,b) {
-      this.y = y;
-      this.x = x;
-      this.vel = vel;
-      this.color = color;
-      this.r = 15;
-      this.hits = 0;
-      this.red = r;
-      this.g = g;
-      this.b = b;
-
-      this.backHit = 0;
+        this.y = y;
+        this.x = x;
+        this.vel = vel;
+        this.color = color;
+        this.r = 15;
+        
+        this.red = r;
+        this.g = g;
+        this.b = b;
+        //Makes sure ball hits the back wall so a paddle can't hit a ball multiple times
+        this.backHit = 0;
+        //This provides a score
+        //The more times a ball is hit the better the paddle has done
+        this.hits = 0;
 
     }
     draw(){
         circle(this.x,this.y,this.r*2)
-        //arc(this.x,this.y, this.r, 0, Math.PI * 2, false)
-        //C.fillStyle = (100,100,100,255)
         fill(this.red,this.g,this.b,100)
-        //circle(this.x,this.y,this.r*2)
     }
     update(paddle){
         this.x = this.x + this.vel.x
@@ -30,7 +30,7 @@ class Ball {
             this.vel.y = this.vel.y * -1
         }
         if(this.x + this.r > displayWidth) {
-            this.vel.x = Math.random() * 10 * -1
+            this.vel.x = -8
             this.vel.y = Math.random() * 10
             this.backHit = 0;
         }
@@ -46,8 +46,7 @@ class Ball {
     RectCircleColliding(rect){
         var distX = Math.abs(this.x - rect.x);
         var distY = Math.abs(this.y - rect.y);
-        //console.log("Rect x: " + rect.x + "Circle x : " + this.x + "Dist x: " + distX + "Calc " + (rect.w/2 + this.r))
-    
+
         if (distX > (rect.w/2 + this.r)) { return false; }
         if (distY > (rect.h/2 + this.r)) { return false; }
     

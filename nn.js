@@ -52,27 +52,54 @@ mutate(rate) {
     });
   }
 
+  dispose() {
+    this.model.dispose();
+  }
+
 predict(inputs) {
     return tf.tidy(() => {
-      const xs = tf.tensor2d([inputs]);
-      const ys = this.model.predict(xs);
-      const outputs = ys.dataSync();
-      // console.log(outputs);
-      return outputs;
+        //inputs
+        const xs = tf.tensor2d([inputs]);
+        //outputs
+        const ys = this.model.predict(xs);
+        const outputs = ys.dataSync();
+        return outputs;
     });
   }
 
+  name(){
+      console.log(this.model.getConfig())
+  }
+
+async save(){
+    //save to local storage
+    await this.model.save('localstorage://my-model');
+}
+async load(){
+    //load from local storage
+    this.model = await tf.loadLayersModel('localstorage://my-model');
+}
+
 createModel() {
     const model = tf.sequential();
+    //Dense is connected to every node
     const hidden = tf.layers.dense({
-      units: this.hidden_nodes,
-      inputShape: [this.input_nodes],
-      activation: 'sigmoid'
+        //Number of nodes
+        units: this.hidden_nodes,
+        //Number of inputs
+        inputShape: [this.input_nodes],
+        //Sigmoid, Need to look further into activation
+        //Using by popular use
+        activation: 'sigmoid'
     });
     model.add(hidden);
     const output = tf.layers.dense({
-      units: this.output_nodes,
-      activation: 'softmax'
+        //Nodes
+        units: this.output_nodes,
+        //Softmax produces a confidence score
+        //All outputs = 1
+        //Highest is most confident
+        activation: 'softmax'
     });
     model.add(output);
     return model;

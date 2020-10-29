@@ -7,8 +7,8 @@ class Paddle {
       this.r = r;
       this.g = g;
       this.b = b;
-      //console.log(brain)
-      this.brain = brain;
+      //Copies so not a pointer
+      this.brain = brain.copy();
 
     }
 
@@ -43,25 +43,31 @@ class Paddle {
     nothing() {
         this.y = this.y;
     }
-  
-    offScreen() {
-      return this.y > height || this.y < 0;
-    }
 
     mutate() {
+        //Changes weights within neural network
+        //Allows for evolution and adaption
         this.brain.mutate(0.1);
+    }
+    name(){
+        //Returns Name of model
+        //Used to check that not pointer 
+        this.brain.name();
     }
   
     update(ball) {
+        //Thinking
         let inputs = [];
         inputs[0] = this.y;
         inputs[1] = ball.x;
         inputs[2] = ball.y;
+
+        //Adding velocity may allow prediction of where ball is in the future
+        //maybe too complex
+
         //inputs[3] = ball.vel.x;
         //inputs[4] = ball.vel.y;
-        //console.log(this.brain)
         let output = this.brain.predict(inputs);
-        //if (output[0] > output[1] && this.velocity >= 0) {
         if (output[0] > output[1] && output[0] > output[2]) {
             this.up();
         }
