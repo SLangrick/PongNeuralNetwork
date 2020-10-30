@@ -31,7 +31,13 @@ class Ball {
         }
         if(this.x + this.r > displayWidth) {
             this.vel.x = -8
-            this.vel.y = Math.random() * 10
+            let yDir = Math.random() * 10
+            if(Math.random() > 0.5){
+                this.vel.y = yDir * -1;
+            } else {
+                this.vel.y = yDir
+            }
+            
             this.backHit = 0;
         }
         if(this.RectCircleColliding(paddle) == true) {

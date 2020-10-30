@@ -3,7 +3,11 @@ class Game {
         //Creates Game
         this.paddle = new Paddle(r,b,g,brain);
         this.paddle.mutate;
-        this.ball = new Ball(displayWidth - 30, displayHeight / 2, {x: -8,y: Math.random() * 10}, r,b,g);
+        let yDir = Math.random() * 10
+        if(Math.random() > 0.5){
+            yDir = yDir * -1;
+        }
+        this.ball = new Ball(displayWidth - 30, displayHeight / 2, {x: -8,y: yDir}, r,b,g);
     }
     update(){
         //Updates Positions
