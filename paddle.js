@@ -1,7 +1,13 @@
 class Paddle {
-    constructor(r,g,b, brain) {
+    constructor(r,g,b, brain, side) {
       this.y = displayHeight / 2;
-      this.x = 100;
+      if(side == "Left"){
+        this.x = 100;
+      }
+      else {
+        this.x = displayWidth - 100;
+      }
+      
       this.w = 1;
       this.h = 100;
       this.r = r;
